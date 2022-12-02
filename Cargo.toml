@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "download-assignment-and-data",
+    "2021",
+    "2022",
+]
