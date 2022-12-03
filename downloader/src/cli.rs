@@ -20,7 +20,7 @@ struct Args {
     day: u32,
 
     /// What to download
-    #[arg(short, long, value_enum, default_value_t = Possibilities::Both)]
+    #[arg(short, long, value_enum, default_value_t = Possibilities::InputOnly)]
     what_to_download: Possibilities,
 }
 
