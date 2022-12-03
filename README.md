@@ -7,9 +7,9 @@ If you'd like to support the creator of Advent of Code, please visit this link -
 
 # Table of Contents
 - [Utility tools](#utility-tools)
-- [2020](#year-2020)
-- [2021](#year-2021)
 - [2022](#year-2022)
+- [2021](#year-2021)
+- [2020](#year-2020)
 
 # Utility tools
 ## Downloader
@@ -28,11 +28,11 @@ To download a specific day:
 cargo run --package downloader -- --year 2022 --day 01 --cookie <YOUR_COOKIE>
 ```
 
-# Year 2020
+# Year 2022
 How to run one day:
 ```
-node 2020/src/day01-01.js
-node 2020/src/day01-02.js
+cargo run --package aoc2022 --bin day01a --release
+cargo run --package aoc2022 --bin day01b --release
 ```
 
 # Year 2021
@@ -41,9 +41,9 @@ How to run one day:
 cargo run --package aoc2021 --bin day01 --release
 ```
 
-# Year 2022
+# Year 2020
 How to run one day:
 ```
-cargo run --package aoc2022 --bin day01a --release
-cargo run --package aoc2022 --bin day01b --release
+node 2020/src/day01-01.js
+node 2020/src/day01-02.js
 ```
