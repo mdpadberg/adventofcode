@@ -1,5 +1,5 @@
 [package]
-name = "download-assignment-and-data"
+name = "downloader"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,3 +10,4 @@ clap = { version = "4.0.29", features = ["derive"] }
 chrono = "0.4.23"
 reqwest = { version = "0.11", features = ["blocking"] }
 anyhow = "1.0.66"
+scraper = "0.13.0"

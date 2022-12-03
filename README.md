@@ -12,20 +12,20 @@ If you'd like to support the creator of Advent of Code, please visit this link -
 - [2022](#year-2022)
 
 # Utility tools
-## Download data
+## Downloader
 To see all possibilities:
 ```
-cargo run --package download-assignment-and-data -- -h
+cargo run --package downloader -- -h
 ```
 
 To download the current day:
 ```
-cargo run --package download-assignment-and-data -- --cookie <YOUR_COOKIE>
+cargo run --package downloader -- --cookie <YOUR_COOKIE>
 ```
 
 To download a specific day:
 ```
-cargo run --package download-assignment-and-data -- --year 2022 --day 01 --cookie <YOUR_COOKIE>
+cargo run --package downloader -- --year 2022 --day 01 --cookie <YOUR_COOKIE>
 ```
 
 # Year 2020
