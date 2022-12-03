@@ -2,7 +2,7 @@ use crate::{
     cli::Possibilities,
     http::{call_url_with_headers, create_cookie_header},
 };
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use scraper::{Html, Selector};
 
 pub fn download(
@@ -44,13 +44,16 @@ fn download_assignment(cookie: &String, year: &i32, day: &u32) -> Result<()> {
     let response =
         call_url_with_headers(url, create_cookie_header(&cookie)?)?.text_with_charset("utf-8")?;
     let document = Html::parse_fragment(&response);
-    let selector = Selector::parse("article").unwrap();
-    let html_main = document
-        .select(&selector)
-        .into_iter()
-        .map(|value| value.inner_html())
-        .collect::<String>();
-    write_to_file(&folder, &file, html_main)
+    if let Ok(selector) = Selector::parse("article") {
+        let html_main = document
+            .select(&selector)
+            .into_iter()
+            .map(|value| value.inner_html())
+            .collect::<String>();
+        write_to_file(&folder, &file, html_main)
+    } else {
+        bail!("problem with parsing html of the assignment")
+    }
 }
 
 fn write_to_file(folder: &String, file: &String, data: String) -> Result<()> {

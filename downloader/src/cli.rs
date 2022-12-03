@@ -7,7 +7,7 @@ use clap::{arg, command, Parser, ValueEnum};
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Cookie, you can find this one after logging in and going with f12 to developer options
+    /// Your cookie, login with the browser and find your cookie with the f12 developer tools
     #[arg(short, long)]
     cookie: String,
 
