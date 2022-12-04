@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-
 use aoc2022::util::read_data_for_day;
 
 fn main() {
