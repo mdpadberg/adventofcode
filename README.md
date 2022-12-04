@@ -44,6 +44,6 @@ cargo run --package aoc2021 --bin day01 --release
 # Year 2020
 How to run one day:
 ```
-node 2020/src/day01-01.js
-node 2020/src/day01-02.js
+node 2020/src/bin/day01-01.js
+node 2020/src/bin/day01-02.js
 ```
