@@ -13,12 +13,12 @@ pub fn run(args: Args) -> Result<()> {
             let second_part = format!("day{}b", args.day);
             let result_first_part = linux_time_command(
                 args.amount_of_runs,
-                "node",
+                &format!("benchtest/src/js.sh"),
                 &format!("{year}/src/bin/{first_part}.js"),
             )?;
             let result_second_part = linux_time_command(
                 args.amount_of_runs,
-                "node",
+                &format!("benchtest/src/js.sh"),
                 &format!("{year}/src/bin/{second_part}.js"),
             )?;
             let output_folder = format!("{}/performance/", args.year);
@@ -34,8 +34,35 @@ pub fn run(args: Args) -> Result<()> {
             )?;
             Ok(())
         }
-        // TODO needs to run cargo build first then call from target folder
-        (Os::ubuntu, Language::rust) => todo!(),
+        (Os::ubuntu, Language::rust) => {
+            let year = args.year;
+            let first_part = format!("day{}a", args.day);
+            let second_part = format!("day{}b", args.day);
+            cargo_build(year, &first_part)?;
+            cargo_build(year, &second_part)?;
+            let result_first_part = linux_time_command(
+                args.amount_of_runs,
+                &format!("benchtest/src/rust.sh"),
+                &format!("target/release/{first_part}"),
+            )?;
+            let result_second_part = linux_time_command(
+                args.amount_of_runs,
+                &format!("benchtest/src/rust.sh"),
+                &format!("target/release/{second_part}"),
+            )?;
+            let output_folder = format!("{}/performance/", args.year);
+            write_to_file(
+                &output_folder,
+                &format!("{}{}.txt", &output_folder, &first_part),
+                result_first_part,
+            )?;
+            write_to_file(
+                &output_folder,
+                &format!("{}{}.txt", &output_folder, &second_part),
+                result_second_part,
+            )?;
+            Ok(())
+        },
         // TODO does time -l work?
         (Os::mac, Language::javascript) => todo!(),
         // TODO does time -l work? && needs to build first then call from target folder
@@ -47,7 +74,7 @@ pub fn run(args: Args) -> Result<()> {
 /// See man page for more info: https://man7.org/linux/man-pages/man1/time.1.html
 fn linux_time_command(
     amount_of_runs: u32,
-    subcommand: &str,
+    shell_file: &str,
     path_to_file_to_benchmark: &str,
 ) -> Result<String> {
     let pre_text = format!("These are the result of {amount_of_runs} test runs: \n");
@@ -55,9 +82,8 @@ fn linux_time_command(
         Command::new("/usr/bin/time")
             .args([
                 "-v",
-                &format!("benchtest/src/ubuntu.sh"),
+                shell_file,
                 &format!("{}", amount_of_runs),
-                subcommand,
                 path_to_file_to_benchmark,
             ])
             .output()?
@@ -69,5 +95,19 @@ fn linux_time_command(
 fn write_to_file(folder: &String, file: &String, data: String) -> Result<()> {
     std::fs::create_dir_all(folder).context("cannot create this folder")?;
     std::fs::write(&file, data).context("cannot write to file")?;
+    Ok(())
+}
+
+fn cargo_build(year: i32, bin_name: &str) -> Result<()> {
+    Command::new("cargo")
+    .args([
+        "build",
+        "--package",
+        &format!("aoc{year}"),
+        "--bin",
+        bin_name,
+        "--release",
+    ])
+    .output()?;
     Ok(())
 }
