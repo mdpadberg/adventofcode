@@ -6,11 +6,12 @@ use anyhow::Result;
 use std::process::Command;
 
 pub fn run(args: Args) -> Result<()> {
+    let year = args.year;
+    let first_part = format!("day{}a", args.day);
+    let second_part = format!("day{}b", args.day);
+    let output_folder = format!("{}/performance/", args.year);
     match (args.operation_system, args.language) {
         (Os::ubuntu, Language::javascript) => {
-            let year = args.year;
-            let first_part = format!("day{}a", args.day);
-            let second_part = format!("day{}b", args.day);
             let result_first_part = linux_time_command(
                 args.amount_of_runs,
                 &format!("benchtest/src/js.sh"),
@@ -21,7 +22,6 @@ pub fn run(args: Args) -> Result<()> {
                 &format!("benchtest/src/js.sh"),
                 &format!("{year}/src/bin/{second_part}.js"),
             )?;
-            let output_folder = format!("{}/performance/", args.year);
             write_to_file(
                 &output_folder,
                 &format!("{}{}.txt", &output_folder, &first_part),
@@ -35,9 +35,6 @@ pub fn run(args: Args) -> Result<()> {
             Ok(())
         }
         (Os::ubuntu, Language::rust) => {
-            let year = args.year;
-            let first_part = format!("day{}a", args.day);
-            let second_part = format!("day{}b", args.day);
             cargo_build(year, &first_part)?;
             cargo_build(year, &second_part)?;
             let result_first_part = linux_time_command(
@@ -50,7 +47,6 @@ pub fn run(args: Args) -> Result<()> {
                 &format!("benchtest/src/rust.sh"),
                 &format!("target/release/{second_part}"),
             )?;
-            let output_folder = format!("{}/performance/", args.year);
             write_to_file(
                 &output_folder,
                 &format!("{}{}.txt", &output_folder, &first_part),
@@ -62,7 +58,7 @@ pub fn run(args: Args) -> Result<()> {
                 result_second_part,
             )?;
             Ok(())
-        },
+        }
         // TODO does time -l work?
         (Os::mac, Language::javascript) => todo!(),
         // TODO does time -l work? && needs to build first then call from target folder
@@ -100,14 +96,14 @@ fn write_to_file(folder: &String, file: &String, data: String) -> Result<()> {
 
 fn cargo_build(year: i32, bin_name: &str) -> Result<()> {
     Command::new("cargo")
-    .args([
-        "build",
-        "--package",
-        &format!("aoc{year}"),
-        "--bin",
-        bin_name,
-        "--release",
-    ])
-    .output()?;
+        .args([
+            "build",
+            "--package",
+            &format!("aoc{year}"),
+            "--bin",
+            bin_name,
+            "--release",
+        ])
+        .output()?;
     Ok(())
 }
