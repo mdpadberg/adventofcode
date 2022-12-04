@@ -25,25 +25,26 @@ cargo run --package downloader -- --cookie <YOUR_COOKIE>
 
 To download a specific day:
 ```
-cargo run --package downloader -- --year 2022 --day 01 --cookie <YOUR_COOKIE>
+cargo run --package downloader -- --year 2022 --day 1 --cookie <YOUR_COOKIE>
 ```
 
 # Year 2022
 How to run one day:
 ```
-cargo run --package aoc2022 --bin day01a --release
-cargo run --package aoc2022 --bin day01b --release
+cargo run --package aoc2022 --bin day1a --release
+cargo run --package aoc2022 --bin day1b --release
 ```
 
 # Year 2021
 How to run one day:
 ```
-cargo run --package aoc2021 --bin day01 --release
+cargo run --package aoc2021 --bin day1a --release
+cargo run --package aoc2021 --bin day1b --release
 ```
 
 # Year 2020
 How to run one day:
 ```
-node 2020/src/bin/day01-01.js
-node 2020/src/bin/day01-02.js
+node 2020/src/bin/day1a.js
+node 2020/src/bin/day1b.js
 ```
