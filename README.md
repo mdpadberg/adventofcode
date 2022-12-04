@@ -36,12 +36,12 @@ cargo run --package benchtest -- -h
 
 To download the current day:
 ```
-cargo run --package downloader --
+cargo run --package benchtest --
 ```
 
 To download a specific day:
 ```
-cargo run --package downloader -- --year 2022 --day 1 --language rust --amount-of-runs 100 --operation-system ubuntu
+cargo run --package benchtest -- --year 2022 --day 1 --language rust --amount-of-runs 100 --operation-system ubuntu
 ```
 
 # Year 2022
