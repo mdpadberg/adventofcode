@@ -28,6 +28,22 @@ To download a specific day:
 cargo run --package downloader -- --year 2022 --day 1 --cookie <YOUR_COOKIE>
 ```
 
+## Benchtest
+To see all possibilities
+```
+cargo run --package benchtest -- -h
+```
+
+To download the current day:
+```
+cargo run --package downloader --
+```
+
+To download a specific day:
+```
+cargo run --package downloader -- --year 2022 --day 1 --language rust --amount-of-runs 100 --operation-system ubuntu
+```
+
 # Year 2022
 How to run one day:
 ```

@@ -2,6 +2,7 @@
 
 members = [
     "downloader",
+    "benchtest",
     "2021",
     "2022",
 ]
