@@ -1,19 +1,19 @@
 These are the result of 100 test runs: 
-	Command being timed: "benchtest/src/ubuntu.sh 100 node 2020/src/bin/day6b.js"
-	User time (seconds): 2.98
-	System time (seconds): 0.41
+	Command being timed: "benchtest/src/js.sh 100 2020/src/bin/day6b.js"
+	User time (seconds): 2.87
+	System time (seconds): 0.44
 	Percent of CPU this job got: 103%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.27
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.20
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 46168
+	Maximum resident set size (kbytes): 46272
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 24
-	Minor (reclaiming a frame) page faults: 458483
-	Voluntary context switches: 4598
-	Involuntary context switches: 161
+	Major (requiring I/O) page faults: 15
+	Minor (reclaiming a frame) page faults: 458508
+	Voluntary context switches: 4650
+	Involuntary context switches: 379
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 0
