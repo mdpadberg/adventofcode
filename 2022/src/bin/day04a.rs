@@ -30,7 +30,7 @@ fn solve(input: String) -> usize {
                     },
                 })
                 .filter(|campcleanup| {
-                    same_range(
+                    range_is_subset_of_other_range(
                         &campcleanup.cleaning_duty_elf_one,
                         &campcleanup.cleaning_duty_elf_two,
                     )
@@ -40,7 +40,10 @@ fn solve(input: String) -> usize {
         .count()
 }
 
-fn same_range(a: &std::ops::Range<u64>, b: &std::ops::Range<u64>) -> bool {
+/// 2-8, 3-7 range b is subset of range a
+/// 3-7, 2-8 range a is subset of range b
+/// 5-7, 7-9 range a is not a full subset of range b and also not the other way around
+fn range_is_subset_of_other_range(a: &std::ops::Range<u64>, b: &std::ops::Range<u64>) -> bool {
     ((b.start <= a.end && b.start >= a.start) && (b.end >= a.start && b.end <= a.end))
         || ((a.start >= b.start && a.start <= b.end) && (a.end <= b.end && a.end >= b.start))
 }
