@@ -1,14 +1,10 @@
 use aoc2021::util::read_file_line_by_line_to_string;
-use measure_time::print_time;
 
 fn main() {
-    print_time!("execution");
     println!(
         "solve_part_one -> {:#?}",
         solve_part_one(read_file_line_by_line_to_string("2021/data/21.txt"))
     );
-    //cargo run --bin day21 --release
-    //execution took 0.02ms
 }
 
 fn solve_part_one(input: Vec<String>) -> u32 {

@@ -6,8 +6,8 @@ use regex::Regex;
 
 fn main() {
     println!(
-        "solve_part_one -> {:#?}",
-        solve_part_one(read_file_line_by_line_to_string("2021/data/2.txt"))
+        "solve_part_two -> {:#?}",
+        solve_part_two(read_file_line_by_line_to_string("2021/data/2.txt"))
     );
 }
 
@@ -15,21 +15,23 @@ lazy_static! {
     static ref REGEX: Regex = Regex::new(r"(\w+)\s(\d+)").unwrap();
 }
 
-fn solve_part_one(data: Vec<String>) -> u64 {
+fn solve_part_two(data: Vec<String>) -> u64 {
     let mut horizontal_position = 0;
     let mut depth = 0;
+    let mut aim = 0;
     data.iter()
         .map(|line| REGEX.captures(line).unwrap())
         .map(|captures| SubmarineMovement::from_str(&captures[1], &captures[2]))
         .for_each(|submarine_movement| {
             if submarine_movement.command == Command::FORWARD {
                 horizontal_position += submarine_movement.units;
+                depth += submarine_movement.units * aim;
             }
             if submarine_movement.command == Command::DOWN {
-                depth += submarine_movement.units;
+                aim += submarine_movement.units;
             }
             if submarine_movement.command == Command::UP {
-                depth -= submarine_movement.units;
+                aim -= submarine_movement.units;
             }
         });
     horizontal_position * depth
@@ -77,7 +79,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn one() {
+    fn two() {
         let data = vec![
             String::from("forward 5"),
             String::from("down 5"),
@@ -86,6 +88,6 @@ mod test {
             String::from("down 8"),
             String::from("forward 2"),
         ];
-        assert_eq!(150, solve_part_one(data));
+        assert_eq!(900, solve_part_two(data));
     }
 }

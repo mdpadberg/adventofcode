@@ -4,15 +4,15 @@ use regex::Regex;
 
 fn main() {
     println!(
-        "solve_part_one -> {:#?}",
-        solve_part_one(read_file_line_by_line_to_string("2021/data/13.txt"))
+        "solve_part_two -> {:#?}",
+        solve_part_two(read_file_line_by_line_to_string("2021/data/13.txt"))
     );
 }
 
-fn solve_part_one(input: Vec<String>) -> usize {
+fn solve_part_two(input: Vec<String>) -> Vec<String> {
     let mut transparent_paper = TransparentPaper::new(input);
-    transparent_paper.fold_once();
-    transparent_paper.dots.len()
+    transparent_paper.fold_all();
+    transparent_paper.print_grid()
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -137,8 +137,17 @@ mod test {
     }
 
     #[test]
-    fn one() {
-        assert_eq!(17, solve_part_one(test_data()));
+    fn two() {
+        let expected = vec![
+            String::from("#####"),
+            String::from("#...#"),
+            String::from("#...#"),
+            String::from("#...#"),
+            String::from("#####"),
+            String::from("....."),
+            String::from("....."),
+        ];
+        assert_eq!(expected, solve_part_two(test_data()));
     }
 
     #[test]

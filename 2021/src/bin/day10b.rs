@@ -1,20 +1,22 @@
 use aoc2021::util::read_file_line_by_line_to_string;
+use itertools::Itertools;
 
 fn main() {
     println!(
         "solve_part_one -> {:#?}",
-        solve_part_one(read_file_line_by_line_to_string("2021/data/10.txt"))
+        solve_part_two(read_file_line_by_line_to_string("2021/data/10.txt"))
     );
 }
 
-fn solve_part_one(input: Vec<String>) -> u32 {
-    parse_intput(input)
+fn solve_part_two(input: Vec<String>) -> usize {
+    let incomplete = parse_intput(input)
         .into_iter()
         .map(|line| NavigationSubSystemLine::create(line))
-        .map(|navigationline| navigationline.syntax_error_score())
-        .filter(|option| option.is_some())
-        .map(|option| option.unwrap())
-        .sum()
+        .filter(|navigationline| navigationline.syntax_error_score().is_none())
+        .map(|navigationline| navigationline.fix_incomplete_score())
+        .sorted()
+        .collect::<Vec<usize>>();
+    incomplete[incomplete.len() / 2]
 }
 
 fn parse_intput(input: Vec<String>) -> Vec<Vec<char>> {
@@ -104,8 +106,8 @@ mod test {
     use super::*;
 
     #[test]
-    fn one() {
-        assert_eq!(26397, solve_part_one(test_data()));
+    fn two() {
+        assert_eq!(288957, solve_part_two(test_data()));
     }
 
     #[test]

@@ -6,13 +6,19 @@ use std::collections::{HashMap, HashSet};
 fn main() {
     println!(
         "solve_part_one -> {:#?}",
-        solve_part_one(read_file_line_by_line_to_string("2021/data/11.txt"))
+        solve_part_two(read_file_line_by_line_to_string("2021/data/11.txt"))
     );
 }
 
-fn solve_part_one(input: Vec<String>) -> usize {
+fn solve_part_two(input: Vec<String>) -> usize {
     let mut grid = Grid::create(input);
-    (0..100).map(|_| grid.round()).sum()
+    let mut sum = 0;
+    let mut rounds = 0;
+    while sum != 100 {
+        sum = grid.round();
+        rounds += 1;
+    }
+    rounds
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Copy)]
@@ -153,7 +159,7 @@ mod test {
     }
 
     #[test]
-    fn one() {
-        assert_eq!(1656, solve_part_one(test_data()));
+    fn two() {
+        assert_eq!(195, solve_part_two(test_data()));
     }
 }

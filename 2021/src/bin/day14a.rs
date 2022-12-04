@@ -1,19 +1,15 @@
-use std::{collections::HashMap, str::Chars};
+use std::{collections::HashMap};
 
 use aoc2021::util::read_file_line_by_line_to_string;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use measure_time::print_time;
 use regex::Regex;
 
 fn main() {
-    print_time!("execution");
     println!(
         "solve_part_one -> {:#?}",
         solve_part_one(read_file_line_by_line_to_string("2021/data/14.txt"))
     );
-    //cargo run --bin day14 --release
-    //execution took ?ms
 }
 
 fn solve_part_one(input: Vec<String>) -> usize {

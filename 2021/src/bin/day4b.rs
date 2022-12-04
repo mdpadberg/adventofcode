@@ -9,26 +9,23 @@ use itertools::Itertools;
 
 fn main() {
     println!(
-        "solve_part_one -> {:#?}",
-        solve_part_one(read_file_line_by_line_to_string("2021/data/4.txt"))
+        "solve_part_two -> {:#?}",
+        solve_part_two(read_file_line_by_line_to_string("2021/data/4.txt"))
     );
 }
 
-//Loop 2x to parse all columns and rows and map to BingoBoard
-//Loop 1x to get the highest number of BingoBoard in each row
-//Loop 1x to get the highest number of BingoBoard in each column
-fn solve_part_one(data: Vec<String>) -> u32 {
+fn solve_part_two(data: Vec<String>) -> u32 {
     let bingonumbers = parse_bingonumbers(&data);
-    let (fastest_bingo_number_for_fastest_bingo_board, fastest_bingo_board) =
+    let (fastest_bingo_number_for_slowest_bingo_board, slowest_bingo_board) =
         parse_bingoboards(&data, &bingonumbers)
             .into_iter()
             .map(|bingoboard| (bingoboard.calculate_bingo_number(), bingoboard))
-            .sorted_by(|a, b| Ord::cmp(&a.0, &b.0))
+            .sorted_by(|a, b| Ord::cmp(&b.0, &a.0))
             .nth(0)
             .unwrap();
-    fastest_bingo_board.bingoboards_score_after_bingo_test(
+    slowest_bingo_board.bingoboards_score_after_bingo_test(
         &bingonumbers,
-        &fastest_bingo_number_for_fastest_bingo_board,
+        &fastest_bingo_number_for_slowest_bingo_board,
     )
 }
 
@@ -207,8 +204,8 @@ mod test {
     }
 
     #[test]
-    fn one() {
-        assert_eq!(4512, solve_part_one(test_data()));
+    fn two() {
+        assert_eq!(1924, solve_part_two(test_data()));
     }
 
     #[test]

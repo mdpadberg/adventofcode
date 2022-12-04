@@ -1,21 +1,26 @@
 use aoc2021::util::{
     read_file_line_by_line_to_string, string_of_between_zero_and_nine_to_to_usize_vec,
 };
+use itertools::Itertools;
 
 fn main() {
     println!(
         "solve_part_one -> {:#?}",
-        solve_part_one(read_file_line_by_line_to_string("2021/data/9.txt"))
+        solve_part_two(read_file_line_by_line_to_string("2021/data/9.txt"))
     );
 }
 
-fn solve_part_one(rows: Vec<String>) -> u32 {
+//TEST WORKS, REAL DATA -> thread 'main' has overflowed its stack, fatal runtime error: stack overflow
+fn solve_part_two(rows: Vec<String>) -> usize {
     let grid = Grid::create(string_of_between_zero_and_nine_to_to_usize_vec(rows));
-    grid.get_all_values_below_row_avg()
+    let basins = grid.get_all_values_below_row_avg()
         .into_iter()
         .filter(|point| !grid.has_lower_neighbors(point))
-        .map(|lowest_point| lowest_point.value + 1)
-        .sum()
+        .map(|lowest_point| grid.floodfill(&lowest_point))
+        .map(|basin| basin.iter().map(|point| point.value).count())
+        .sorted_by(|a, b| b.cmp(a))
+        .collect::<Vec<usize>>();
+    basins[0] * basins[1] * basins[2]
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -78,6 +83,41 @@ impl Grid {
             > 0
     }
 
+    fn floodfill(&self, current_point: &Point) -> Vec<Point> {
+        let mut recursive_neighbors = self.recursive_neighbors(current_point);
+        recursive_neighbors.push(current_point.clone());
+        recursive_neighbors
+    }
+
+    fn recursive_neighbors(&self, current_point: &Point) -> Vec<Point> {
+        let x = current_point.x as i32;
+        let y = current_point.y as i32;
+        let left = self.get_point(x - 1, y);
+        let right = self.get_point(x + 1, y);
+        let below = self.get_point(x, y + 1);
+        let up = self.get_point(x, y - 1);
+        let neighbors_which_are_not_nine_and_higher_then_current_value = [left, right, below, up]
+            .iter()
+            .filter(|option| option.is_some())
+            .map(|option| option.unwrap())
+            .filter(|point| point.value != 9)
+            .filter(|point| point.value >= current_point.value)
+            .collect::<Vec<Point>>();
+        if neighbors_which_are_not_nine_and_higher_then_current_value.len() == 0 {
+            return vec![];
+        }
+        let recursive_neighbors = neighbors_which_are_not_nine_and_higher_then_current_value
+            .iter()
+            .flat_map(|point| self.floodfill(point))
+            .collect::<Vec<Point>>();
+        neighbors_which_are_not_nine_and_higher_then_current_value
+            .into_iter()
+            .chain(recursive_neighbors)
+            .sorted()
+            .dedup()
+            .collect()
+    }
+
     fn get_point(&self, x: i32, y: i32) -> Option<Point> {
         if y >= 0 && (y as usize) < self.data.len() {
             let row = &self.data[y as usize];
@@ -101,7 +141,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn one() {
+    fn two() {
         let input = vec![
             String::from("2199943210"),
             String::from("3987894921"),
@@ -109,7 +149,7 @@ mod test {
             String::from("8767896789"),
             String::from("9899965678"),
         ];
-        assert_eq!(15, solve_part_one(input));
+        assert_eq!(1134, solve_part_two(input));
     }
 
     #[test]
@@ -390,6 +430,233 @@ mod test {
                 y: 1,
                 value: 9
             })
+        );
+    }
+
+    #[test]
+    fn floodfill_test() {
+        assert_eq!(
+            vec![
+                Point {
+                    x: 0,
+                    y: 0,
+                    value: 2
+                },
+                Point {
+                    x: 0,
+                    y: 1,
+                    value: 3
+                },
+                Point {
+                    x: 1,
+                    y: 0,
+                    value: 1
+                }
+            ],
+            Grid::floodfill(
+                &get_test_grid_object(),
+                &Point {
+                    x: 1,
+                    y: 0,
+                    value: 1
+                }
+            )
+        );
+        assert_eq!(
+            vec![
+                Point {
+                    x: 5,
+                    y: 0,
+                    value: 4
+                },
+                Point {
+                    x: 6,
+                    y: 0,
+                    value: 3
+                },
+                Point {
+                    x: 6,
+                    y: 1,
+                    value: 4
+                },
+                Point {
+                    x: 7,
+                    y: 0,
+                    value: 2
+                },
+                Point {
+                    x: 8,
+                    y: 0,
+                    value: 1
+                },
+                Point {
+                    x: 8,
+                    y: 1,
+                    value: 2
+                },
+                Point {
+                    x: 9,
+                    y: 1,
+                    value: 1
+                },
+                Point {
+                    x: 9,
+                    y: 2,
+                    value: 2
+                },
+                Point {
+                    x: 9,
+                    y: 0,
+                    value: 0
+                }
+            ],
+            Grid::floodfill(
+                &get_test_grid_object(),
+                &Point {
+                    x: 9,
+                    y: 0,
+                    value: 0
+                }
+            )
+        );
+        assert_eq!(
+            vec![
+                Point {
+                    x: 0,
+                    y: 3,
+                    value: 8
+                },
+                Point {
+                    x: 1,
+                    y: 2,
+                    value: 8
+                },
+                Point {
+                    x: 1,
+                    y: 3,
+                    value: 7
+                },
+                Point {
+                    x: 1,
+                    y: 4,
+                    value: 8
+                },
+                Point {
+                    x: 2,
+                    y: 1,
+                    value: 8
+                },
+                Point {
+                    x: 2,
+                    y: 3,
+                    value: 6
+                },
+                Point {
+                    x: 3,
+                    y: 1,
+                    value: 7
+                },
+                Point {
+                    x: 3,
+                    y: 2,
+                    value: 6
+                },
+                Point {
+                    x: 3,
+                    y: 3,
+                    value: 7
+                },
+                Point {
+                    x: 4,
+                    y: 1,
+                    value: 8
+                },
+                Point {
+                    x: 4,
+                    y: 2,
+                    value: 7
+                },
+                Point {
+                    x: 4,
+                    y: 3,
+                    value: 8
+                },
+                Point {
+                    x: 5,
+                    y: 2,
+                    value: 8
+                },
+                Point {
+                    x: 2,
+                    y: 2,
+                    value: 5
+                }
+            ],
+            Grid::floodfill(
+                &get_test_grid_object(),
+                &Point {
+                    x: 2,
+                    y: 2,
+                    value: 5
+                }
+            )
+        );
+        assert_eq!(
+            vec![
+                Point {
+                    x: 5,
+                    y: 4,
+                    value: 6
+                },
+                Point {
+                    x: 6,
+                    y: 3,
+                    value: 6
+                },
+                Point {
+                    x: 7,
+                    y: 2,
+                    value: 8
+                },
+                Point {
+                    x: 7,
+                    y: 3,
+                    value: 7
+                },
+                Point {
+                    x: 7,
+                    y: 4,
+                    value: 6
+                },
+                Point {
+                    x: 8,
+                    y: 3,
+                    value: 8
+                },
+                Point {
+                    x: 8,
+                    y: 4,
+                    value: 7
+                },
+                Point {
+                    x: 9,
+                    y: 4,
+                    value: 8
+                },
+                Point {
+                    x: 6,
+                    y: 4,
+                    value: 5
+                }
+            ],
+            Grid::floodfill(
+                &get_test_grid_object(),
+                &Point {
+                    x: 6,
+                    y: 4,
+                    value: 5
+                }
+            )
         );
     }
 

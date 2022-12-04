@@ -3,14 +3,14 @@ use itertools::Itertools;
 
 fn main() {
     println!(
-        "solve_part_one -> {:#?}",
-        solve_part_one(read_file("2021/data/6.txt"))
+        "solve_part_two -> {:#?}",
+        solve_part_two(read_file("2021/data/6.txt"))
     );
 }
 
-fn solve_part_one(input: String) -> usize {
+fn solve_part_two(input: String) -> usize {
     let mut ocean = parse_input(input);
-    for i in 0..80 {
+    for i in 0..256 {
         ocean.next_day();
     }
     ocean.size()
@@ -119,8 +119,8 @@ mod test {
     }
 
     #[test]
-    fn one() {
-        assert_eq!(5934, solve_part_one(test_data()));
+    fn two() {
+        assert_eq!(26984457539, solve_part_two(test_data()));
     }
 
     #[test]
