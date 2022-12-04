@@ -34,14 +34,14 @@ To see all possibilities
 cargo run --package benchtest -- -h
 ```
 
-To download the current day:
+To run a benchmark for the current day:
 ```
-cargo run --package benchtest --
+cargo build --package benchtest --release && ./target/release/benchtest
 ```
 
-To download a specific day:
+To run a benchmark for a specific day:
 ```
-cargo run --package benchtest -- --year 2022 --day 1 --language rust --amount-of-runs 100 --operation-system ubuntu
+cargo build --package benchtest --release && ./target/release/benchtest --year 2022 --day 1 --language rust --amount-of-runs 100 --operation-system ubuntu
 ```
 
 # Year 2022
