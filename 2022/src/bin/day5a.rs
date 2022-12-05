@@ -66,6 +66,9 @@ lazy_static! {
     static ref MOVE: Regex = Regex::new(r"move (\d+) from (\d+) to (\d+)").unwrap();
 }
 
+///move 1 from 2 to 1
+///move 3 from 1 to 3
+///move 2 from 2 to 1
 fn parse_moves(line: &str) -> Move {
     *MOVE
         .captures_iter(line)
