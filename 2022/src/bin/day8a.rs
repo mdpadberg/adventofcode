@@ -23,31 +23,18 @@ fn solve(input: String) -> usize {
             let trees_down = Direction::DOWN(current_tree.clone()).get(&grid);
             let trees_left = Direction::LEFT(current_tree.clone()).get(&grid);
             let trees_right = Direction::RIGHT(current_tree.clone()).get(&grid);
-            let (amount_of_trees_above, amount_of_trees_above_lower_than_current_tree) = (
-                trees_above.iter().count(),
-                trees_above.iter().filter(|v| v < &value).count(),
-            );
-            let (amount_of_trees_below, amount_of_trees_below_lower_than_current_tree) = (
-                trees_down.iter().count(),
-                trees_down.iter().filter(|v| v < &value).count(),
-            );
-            let (amount_of_trees_left, amount_of_trees_left_lower_than_current_tree) = (
-                trees_left.iter().count(),
-                trees_left.iter().filter(|v| v < &value).count(),
-            );
-            let (amount_of_trees_right, amount_of_trees_right_lower_than_current_tree) = (
-                trees_right.iter().count(),
-                trees_right.iter().filter(|v| v < &value).count(),
-            );
-
+            let amount_of_trees_above = trees_above.iter().count();
+            let amount_of_trees_below = trees_down.iter().count();
+            let amount_of_trees_right = trees_right.iter().count();
+            let amount_of_trees_left = trees_left.iter().count();
             if amount_of_trees_above == 0
                 || amount_of_trees_below == 0
                 || amount_of_trees_left == 0
                 || amount_of_trees_right == 0
-                || amount_of_trees_above == amount_of_trees_above_lower_than_current_tree
-                || amount_of_trees_below == amount_of_trees_below_lower_than_current_tree
-                || amount_of_trees_right == amount_of_trees_right_lower_than_current_tree
-                || amount_of_trees_left == amount_of_trees_left_lower_than_current_tree
+                || amount_of_trees_above == trees_above.iter().filter(|v| v < &value).count()
+                || amount_of_trees_below == trees_down.iter().filter(|v| v < &value).count()
+                || amount_of_trees_right == trees_right.iter().filter(|v| v < &value).count()
+                || amount_of_trees_left == trees_left.iter().filter(|v| v < &value).count()
             {
                 tree_visable_from_outside += 1;
             }
