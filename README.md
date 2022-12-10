@@ -25,7 +25,7 @@ cargo run --package downloader -- --cookie <YOUR_COOKIE>
 
 To download a specific day:
 ```
-cargo run --package downloader -- --year 2022 --day 1 --cookie <YOUR_COOKIE>
+cargo run --package downloader -- --year 2022 --day 1 --what-to-download --cookie <YOUR_COOKIE>
 ```
 
 ## Benchtest
