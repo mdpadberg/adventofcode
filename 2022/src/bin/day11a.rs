@@ -37,14 +37,12 @@ fn solve(input: String) -> u64 {
             monkeys = new_situation;
         }
     }
-    
-    let two_most_active_monkeys: Vec<&Monkey> = monkeys
+    monkeys
         .iter()
         .sorted_by(|a, b| b.items_inspected.cmp(&a.items_inspected))
         .take(2)
-        .collect();
-    two_most_active_monkeys.get(0).unwrap().items_inspected * 
-    two_most_active_monkeys.get(1).unwrap().items_inspected
+        .map(|m| m.items_inspected)
+        .product()
 }
 
 #[derive(Debug, Clone)]
