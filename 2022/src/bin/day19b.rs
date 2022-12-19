@@ -4,6 +4,7 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 
+// SLOOOOOOOOOOOOOOW, how can i speed this up??
 fn main() {
     println!("{}", solve(read_data_for_day(19).unwrap()));
 }
@@ -11,9 +12,10 @@ fn main() {
 fn solve(input: String) -> u32 {
     input
         .split("\n")
+        .take(3)
         .map(|line| Blueprint::from(line))
-        .map(|blueprint| bfs(&blueprint) * blueprint.id)
-        .sum::<u32>()
+        .map(|blueprint| bfs(&blueprint))
+        .product::<u32>()
 }
 
 fn bfs(blueprint: &Blueprint) -> u32 {
@@ -157,7 +159,7 @@ struct Time(u32);
 
 impl Default for Time {
     fn default() -> Self {
-        Self(24)
+        Self(32)
     }
 }
 
@@ -206,6 +208,6 @@ mod test {
     use aoc2022::util::read_test_data_for_day;
     #[test]
     fn solvetest() {
-        assert_eq!(33, solve(read_test_data_for_day(19).unwrap()));
+        assert_eq!(3472, solve(read_test_data_for_day(19).unwrap()));
     }
 }
