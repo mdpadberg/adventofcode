@@ -19,7 +19,7 @@ fn solve(input: String) -> u32 {
 }
 
 fn bfs(blueprint: &Blueprint) -> u32 {
-    let mut visted: HashSet<State> = HashSet::new();
+    let mut visited: HashSet<State> = HashSet::new();
     let mut queue: VecDeque<(Time, State)> = VecDeque::from([(Time::default(), State::default())]);
     let mut best: u32 = 0;
 
@@ -33,12 +33,12 @@ fn bfs(blueprint: &Blueprint) -> u32 {
             continue;
         }
 
-        if visted.contains(&state) {
-            //skip already visted states
+        if visited.contains(&state) {
+            //skip already visited states
             continue;
         } else {
             //insert state in hashset
-            visted.insert(state);
+            visited.insert(state);
         }
 
         //try doing nothing

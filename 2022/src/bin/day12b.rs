@@ -12,16 +12,16 @@ fn solve(input: String) -> u32 {
 }
 
 fn bfs(start: Coordinates, end: Coordinates, locations: HashMap<Coordinates, Height>) -> u32 {
-    let mut visted: HashMap<Coordinates, Score> = HashMap::new();
+    let mut visited: HashMap<Coordinates, Score> = HashMap::new();
     let mut queue: VecDeque<(Coordinates, Score)> = VecDeque::from([(end, Score(0))]);
 
     while let Some((current_location, score)) = queue.pop_front() {
-        if visted.contains_key(&current_location) {
-            //skip already visted nodes
+        if visited.contains_key(&current_location) {
+            //skip already visited nodes
             continue;
         } else {
-            //insert into visted nodes
-            visted.insert(current_location.clone(), score.clone());
+            //insert into visited nodes
+            visited.insert(current_location.clone(), score.clone());
         }
         //if current_location score == 10 then we are at the place we want to be
         if &locations.get(&current_location).unwrap() == &&Height(10) {
@@ -42,7 +42,7 @@ fn bfs(start: Coordinates, end: Coordinates, locations: HashMap<Coordinates, Hei
             queue.push_back((neighbour, Score(score.0 + 1)));
         }
     }
-    visted.values().max().unwrap().0.to_owned()
+    visited.values().max().unwrap().0.to_owned()
 }
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
