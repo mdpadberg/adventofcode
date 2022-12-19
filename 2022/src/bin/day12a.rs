@@ -1,33 +1,65 @@
-use std::collections::HashSet;
-
 use aoc2022::util::read_data_for_day;
 use itertools::Itertools;
+use std::collections::{HashMap, VecDeque};
 
 fn main() {
-    println!("{}", solve(read_data_for_day(11).unwrap()));
+    println!("{}", solve(read_data_for_day(12).unwrap()));
 }
 
-fn solve(input: String) -> u64 {
+fn solve(input: String) -> u32 {
     let map = Map::parse(input);
-    //data parsing is done, now dijkstra??
-    0
+    bfs(map.start, map.end, map.locations)
+}
+
+fn bfs(start: Coordinates, end: Coordinates, locations: HashMap<Coordinates, Height>) -> u32 {
+    let mut visted: HashMap<Coordinates, Score> = HashMap::new();
+    let mut queue: VecDeque<(Coordinates, Score)> = VecDeque::from([(end, Score(0))]);
+
+    while let Some((current_location, score)) = queue.pop_front() {
+        if visted.contains_key(&current_location) {
+            //skip already visted nodes
+            continue;
+        } else {
+            //insert into visted nodes
+            visted.insert(current_location.clone(), score.clone());
+        }
+        //if location == start we are at the place we want to be
+        if current_location == start {
+            break;
+        }
+
+        let valid_neighbours: Vec<Coordinates> = current_location
+            .neighbours()
+            .into_iter()
+            .filter(|c| locations.contains_key(c))
+            // only allowed to make a step when it is at most one lower
+            .filter(|c| {
+                locations.get(&c).unwrap().0 >= &locations.get(&current_location).unwrap().0 - 1
+            })
+            .collect();
+
+        for neighbour in valid_neighbours {
+            queue.push_back((neighbour, Score(score.0 + 1)));
+        }
+    }
+    visted.values().max().unwrap().0.to_owned()
 }
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
 struct Coordinates {
-    x: u32,
-    y: u32,
+    x: i32,
+    y: i32,
 }
 
-#[derive(Debug, Hash, Eq, PartialEq, Clone)]
-struct Location {
-    coordinates: Coordinates,
-    height: u32,
-}
+#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Clone)]
+struct Score(u32);
+
+#[derive(Debug, Eq, PartialEq)]
+struct Height(u32);
 
 #[derive(Debug)]
 struct Map {
-    locations: HashSet<Location>,
+    locations: HashMap<Coordinates, Height>,
     start: Coordinates,
     end: Coordinates,
 }
@@ -36,30 +68,21 @@ impl Map {
     fn parse(input: String) -> Map {
         let mut start = Coordinates { x: 0, y: 0 };
         let mut end = Coordinates { x: 0, y: 0 };
-        let mut locations: HashSet<Location> = HashSet::new();
+        let mut locations: HashMap<Coordinates, Height> = HashMap::new();
         for (y, line) in input.split("\n").enumerate() {
             for (x, c) in line.chars().enumerate() {
                 let coordinates = Coordinates {
-                    x: x as u32,
-                    y: y as u32,
+                    x: x as i32,
+                    y: y as i32,
                 };
                 if c == 'S' {
                     start = coordinates.clone();
-                    locations.insert(Location {
-                        coordinates,
-                        height: 10,
-                    });
+                    locations.insert(coordinates, Height(10));
                 } else if c == 'E' {
                     end = coordinates.clone();
-                    locations.insert(Location {
-                        coordinates,
-                        height: 35,
-                    });
+                    locations.insert(coordinates, Height(35));
                 } else {
-                    locations.insert(Location {
-                        coordinates,
-                        height: c.to_digit(36).unwrap(),
-                    });
+                    locations.insert(coordinates, Height(c.to_digit(36).unwrap()));
                 }
             }
         }
@@ -68,6 +91,38 @@ impl Map {
             start,
             end,
         }
+    }
+}
+
+impl Coordinates {
+    // S   = self
+    // a-d = neighbours
+    // . a .
+    // b S c
+    // . d .
+    fn neighbours(&self) -> Vec<Coordinates> {
+        vec![
+            //a
+            Coordinates {
+                x: self.x,
+                y: self.y - 1,
+            },
+            //b
+            Coordinates {
+                x: self.x - 1,
+                y: self.y,
+            },
+            //c
+            Coordinates {
+                x: self.x + 1,
+                y: self.y,
+            },
+            //d
+            Coordinates {
+                x: self.x,
+                y: self.y + 1,
+            },
+        ]
     }
 }
 
