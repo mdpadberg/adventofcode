@@ -1,6 +1,7 @@
 use std::collections::{HashMap, VecDeque};
 
 use aoc2022::util::read_data_for_day;
+use evalexpr::eval_int;
 use itertools::Itertools;
 
 fn main() {
@@ -18,39 +19,28 @@ fn solve(input: String) -> i64 {
             )
         })
         .collect();
+    let arithmetic_experssion = to_arithmetic(Monkey(String::from("root")), monkeys);
+    eval_int(&arithmetic_experssion).unwrap()
+}
 
-    let mut todo: VecDeque<(Monkey, Job)> = monkeys
-        .iter()
-        .filter(|m| !m.1.is_number())
-        .map(|m| (m.0.clone(), m.1.clone()))
-        .collect();
-    let mut result: HashMap<Monkey, i64> = monkeys
-        .iter()
-        .filter(|m| m.1.is_number())
-        .map(|m| {
-            (
-                m.0.clone(),
-                match m.1 {
-                    Job::Number(number) => number.to_owned(),
-                    Job::Operation(_, _, _) => panic!("Should not happen, AAAAAAAAAAH"),
-                },
-            )
-        })
-        .collect();
-    while let Some((monkey, job)) = todo.pop_front() {
+fn to_arithmetic(start_monkey: Monkey, monkeys: HashMap<Monkey, Job>) -> String {
+    let mut monkeys_to_check: VecDeque<Monkey> = VecDeque::from_iter(vec![start_monkey.clone()]);
+    let mut result = monkeys.get(&start_monkey).unwrap().as_string();
+    while let Some(monkey) = monkeys_to_check.pop_front() {
+        let job = monkeys.get(&monkey).unwrap();
         match &job {
-            Job::Operation(monkey_one, math, monkey_two) => {
-                match (result.get(&monkey_one), result.get(&monkey_two)) {
-                    (Some(a), Some(b)) => {
-                        result.insert(monkey, math.perform(a, b));
-                    },
-                    (_, _) => todo.push_back((monkey, job)),
-                }
-            },
-            Job::Number(_) => panic!("Should not happen, AAAAAAAAAAH"),
+            Job::Number(_) => result = result.replace(&monkey.0, &job.as_string()),
+            Job::Operation(left, _, right) => {
+                result = result.replace(
+                    &monkey.0,
+                    vec!["(", &job.as_string(), ")"].concat().as_str(),
+                );
+                monkeys_to_check.push_back(left.to_owned());
+                monkeys_to_check.push_back(right.to_owned());
+            }
         }
     }
-    result.into_iter().find(|(monkey, value)| monkey == &Monkey(String::from("root"))).unwrap().1
+    result
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
@@ -59,7 +49,7 @@ struct Monkey(String);
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
 enum Job {
     Number(i64),
-    Operation(Monkey, Math, Monkey),
+    Operation(Monkey, String, Monkey),
 }
 
 impl Job {
@@ -70,46 +60,21 @@ impl Job {
                 let values = string.split_ascii_whitespace().collect::<Vec<&str>>();
                 Job::Operation(
                     Monkey(values[0].to_string()),
-                    Math::from(values[1].to_string()),
+                    values[1].to_string(),
                     Monkey(values[2].to_string()),
                 )
             }
         }
     }
 
-    fn is_number(&self) -> bool {
+    fn as_string(&self) -> String {
         match self {
-            Job::Number(_) => true,
-            Job::Operation(_, _, _) => false,
-        }
-    }
-}
-
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
-enum Math {
-    Addition,
-    Subtraction,
-    Multiplication,
-    Division,
-}
-
-impl Math {
-    fn from(string: String) -> Math {
-        match string.as_str() {
-            "+" => Math::Addition,
-            "-" => Math::Subtraction,
-            "*" => Math::Multiplication,
-            "/" => Math::Division,
-            _ => panic!("Should not happen, AAAAAAAAAAH"),
-        }
-    }
-
-    fn perform(&self, a: &i64, b: &i64) -> i64 {
-        match self {
-            Math::Addition => a + b,
-            Math::Subtraction => a - b,
-            Math::Multiplication => a * b,
-            Math::Division => a / b,
+            Job::Number(i) => i.to_string(),
+            Job::Operation(left, operation, right) => {
+                vec![left.0.to_owned(), operation.to_owned(), right.0.to_owned()]
+                    .concat()
+                    .to_string()
+            }
         }
     }
 }
