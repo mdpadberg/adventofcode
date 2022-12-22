@@ -37,8 +37,7 @@ fn solve(input: String) -> i64 {
     } else {
         println!("{:?}", vec![eval_int(&left).unwrap().to_string(), " = ".to_string(), right].concat().as_str());
     }
-    println!("go to https://www.mathpapa.com/algebra-calculator.html to find x");
-    println!("go to https://www.wolframalpha.com/ to find x and select math input");
+    println!("go to https://quickmath.com to find x");
     0
 }
 
