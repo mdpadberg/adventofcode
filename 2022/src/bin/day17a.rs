@@ -6,7 +6,7 @@ fn main() {
     println!("{}", solve(read_data_for_day(17).unwrap()));
 }
 
-//TODO speed up and clean up code
+//TODO speed up and clean up code before starting on 17b
 fn solve(input: String) -> u32 {
     let chars = input.chars().collect::<Vec<char>>();
     let mut rocks: HashSet<Rock> = HashSet::new();
