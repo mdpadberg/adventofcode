@@ -5,18 +5,37 @@ use regex::Regex;
 use std::collections::HashSet;
 
 fn main() {
-    println!("{}", solve(read_data_for_day(15).unwrap()));
+    println!("{}", solve(read_data_for_day(15).unwrap(), 2000000));
 }
 
-fn solve(input: String) -> usize {
-    input
+fn solve(input: String, row: i32) -> usize {
+    let sensors: Vec<Sensor> = input
         .split("\n")
         .map(|str| Sensor::new(str))
         .collect::<Vec<Sensor>>();
-    0
+
+    let beacons: HashSet<Coordinates> = sensors
+        .iter()
+        .map(|sensor| sensor.closest_beacon)
+        .collect::<HashSet<Coordinates>>();
+
+    let points: HashSet<Coordinates> = sensors
+        .iter()
+        .map(|sensor| {
+            let radius = sensor.coordinates.x.abs_diff(sensor.closest_beacon.x) as i32
+                + sensor.coordinates.y.abs_diff(sensor.closest_beacon.y) as i32;
+            Diamond::new(sensor.coordinates, radius)
+        })
+        .flat_map(|diamond| diamond.all_points_in_row(row))
+        .collect::<HashSet<Coordinates>>();
+
+    points
+        .iter()
+        .filter(|point| point.y == row && !beacons.contains(point))
+        .count()
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct Coordinates {
     x: i32,
     y: i32,
@@ -52,11 +71,12 @@ impl Sensor {
 #[derive(Debug, PartialEq, Eq)]
 struct Diamond {
     center: Coordinates,
+    radius: i32,
 }
 
 impl Diamond {
-    fn new(center: Coordinates) -> Diamond {
-        Diamond { center }
+    fn new(center: Coordinates, radius: i32) -> Diamond {
+        Diamond { center, radius }
     }
 
     /// ...#...
@@ -66,12 +86,15 @@ impl Diamond {
     /// .#####.    
     /// ..###..
     /// ...#...
-    fn all_points(&self, radius: i32) -> HashSet<Coordinates> {
+    fn all_points_in_row(&self, row: i32) -> HashSet<Coordinates> {
         let mut points = HashSet::new();
-        for y in self.center.y - radius..=self.center.y + radius {
+        for y in self.center.y - self.radius..=self.center.y + self.radius {
+            if y != row {
+                continue;
+            }
             let distance_to_center = self.center.y.abs_diff(y) as i32;
-            let left = self.center.x - (radius - distance_to_center);
-            let right = self.center.x + (radius - distance_to_center);
+            let left = self.center.x - (self.radius - distance_to_center);
+            let right = self.center.x + (self.radius - distance_to_center);
             for x in left..=right {
                 points.insert(Coordinates { x, y });
             }
@@ -86,25 +109,16 @@ mod test {
     use aoc2022::util::read_test_data_for_day;
     #[test]
     fn solvetest() {
-        assert_eq!(26, solve(read_test_data_for_day(15).unwrap()));
+        assert_eq!(26, solve(read_test_data_for_day(15).unwrap(), 10));
     }
 
     #[test]
     fn diamondtest() {
-        let diamond = Diamond::new(Coordinates { y: 3, x: 3 });
+        let diamond = Diamond::new(Coordinates { y: 3, x: 3 }, 3);
 
         assert_eq!(
-            diamond.all_points(3),
+            diamond.all_points_in_row(3),
             HashSet::from_iter(vec![
-                Coordinates { y: 0, x: 3 },
-                Coordinates { y: 1, x: 2 },
-                Coordinates { y: 1, x: 3 },
-                Coordinates { y: 1, x: 4 },
-                Coordinates { y: 2, x: 1 },
-                Coordinates { y: 2, x: 2 },
-                Coordinates { y: 2, x: 3 },
-                Coordinates { y: 2, x: 4 },
-                Coordinates { y: 2, x: 5 },
                 Coordinates { y: 3, x: 0 },
                 Coordinates { y: 3, x: 1 },
                 Coordinates { y: 3, x: 2 },
@@ -112,15 +126,6 @@ mod test {
                 Coordinates { y: 3, x: 4 },
                 Coordinates { y: 3, x: 5 },
                 Coordinates { y: 3, x: 6 },
-                Coordinates { y: 4, x: 1 },
-                Coordinates { y: 4, x: 2 },
-                Coordinates { y: 4, x: 3 },
-                Coordinates { y: 4, x: 4 },
-                Coordinates { y: 4, x: 5 },
-                Coordinates { y: 5, x: 2 },
-                Coordinates { y: 5, x: 3 },
-                Coordinates { y: 5, x: 4 },
-                Coordinates { y: 6, x: 3 },
             ])
         );
     }
