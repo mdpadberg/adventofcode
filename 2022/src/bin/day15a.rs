@@ -88,16 +88,11 @@ impl Diamond {
     /// ...#...
     fn all_points_in_row(&self, row: i32) -> HashSet<Coordinates> {
         let mut points = HashSet::new();
-        for y in self.center.y - self.radius..=self.center.y + self.radius {
-            if y != row {
-                continue;
-            }
-            let distance_to_center = self.center.y.abs_diff(y) as i32;
-            let left = self.center.x - (self.radius - distance_to_center);
-            let right = self.center.x + (self.radius - distance_to_center);
-            for x in left..=right {
-                points.insert(Coordinates { x, y });
-            }
+        let distance_to_center = self.center.y.abs_diff(row) as i32;
+        let left = self.center.x - (self.radius - distance_to_center);
+        let right = self.center.x + (self.radius - distance_to_center);
+        for x in left..=right {
+            points.insert(Coordinates { x, y: row });
         }
         points
     }
