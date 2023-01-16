@@ -1,5 +1,4 @@
 use aoc2022::util::read_data_for_day;
-use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashSet;
