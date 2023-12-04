@@ -33,6 +33,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(142, solve(read_test_data_for_day(1).unwrap()).unwrap());
+        assert_eq!(142, solve(read_test_data_for_day("1a.txt").unwrap()).unwrap());
     }
 }
