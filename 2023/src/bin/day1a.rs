@@ -1,4 +1,3 @@
-use anyhow::Context;
 use aoc2023::util::read_data_for_day;
 use itertools::Itertools;
 
@@ -6,24 +5,18 @@ fn main() {
     println!("{:?}", solve(read_data_for_day(1).unwrap()));
 }
 
-fn solve(input: String) -> anyhow::Result<u32> {
-    Ok(input
+fn solve(input: String) -> u32 {
+    input
         .split("\n")
         .map(|line| {
             (
-                line.chars().find(|char| char.is_digit(10)),
-                line.chars().rfind(|char| char.is_digit(10)),
+                line.chars().find(|char| char.is_digit(10)).unwrap(),
+                line.chars().rfind(|char| char.is_digit(10)).unwrap(),
             )
         })
-        .map(|(first_number, last_number)| {
-            Ok(format!(
-                "{}{}",
-                first_number.context("no first number")?,
-                last_number.context("no last number")?
-            ))
-        })
-        .map_ok(|two_digit_number| two_digit_number.parse::<u32>().unwrap())
-        .sum::<anyhow::Result<u32>>()?)
+        .map(|(first_number, last_number)| format!("{}{}", first_number, last_number))
+        .map(|two_digit_number| two_digit_number.parse::<u32>().unwrap())
+        .sum::<u32>()
 }
 
 #[cfg(test)]
@@ -33,6 +26,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(142, solve(read_test_data_for_day("1a.txt").unwrap()).unwrap());
+        assert_eq!(142, solve(read_test_data_for_day("1a.txt").unwrap()));
     }
 }
