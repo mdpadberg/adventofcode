@@ -14,7 +14,7 @@ fn main() {
 }
 
 fn solve(input: String) -> u32 {
-    input
+    let cards = input
         .split("\n")
         .flat_map(|line| {
             REGEX
@@ -35,12 +35,17 @@ fn solve(input: String) -> u32 {
                 })
                 .collect::<Vec<Card>>()
         })
-        .map(|card| card.amount_of_winning_numbers_on_elf_card())
-        .filter(|amount_of_winning_numbers_on_elf_card| amount_of_winning_numbers_on_elf_card > &0)
-        .map(|amount_of_winning_numbers_on_elf_card| {
-            (2 as u32).pow((amount_of_winning_numbers_on_elf_card - 1) as u32)
-        })
-        .sum::<u32>()
+        .collect::<Vec<_>>();
+    let mut amount_of_cards = vec![1u32; cards.len()];
+    cards.into_iter().enumerate().for_each(|(i, card)| {
+        let amount_of_card = amount_of_cards[i];
+        let amount_of_winning_numbers_on_elf_card = card.amount_of_winning_numbers_on_elf_card();
+        let next_card_indices = i + 1..=i + amount_of_winning_numbers_on_elf_card as usize;
+        for next_card_index in next_card_indices {
+            amount_of_cards[next_card_index] += amount_of_card;
+        }
+    });
+    amount_of_cards.iter().sum()
 }
 
 #[derive(Debug)]
@@ -65,6 +70,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(13, solve(read_test_data_for_day("4.txt").unwrap()));
+        assert_eq!(30, solve(read_test_data_for_day("4.txt").unwrap()));
     }
 }
