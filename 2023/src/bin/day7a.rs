@@ -96,11 +96,11 @@ impl Pair {
 
 fn score(pairs: Vec<Pair>) -> usize {
     // Examples:
-    // 7    -> "32T3K" -> [Pair { card_count: 1, card: '2' }, Pair { card_count: 2, card: '3' }, Pair { card_count: 1, card: 'K' }, Pair { card_count: 1, card: 'T' }]
-    // 11   -> "T55J5" -> [Pair { card_count: 3, card: '5' }, Pair { card_count: 1, card: 'J' }, Pair { card_count: 1, card: 'T' }]
-    // 9    -> "KK677" -> [Pair { card_count: 1, card: '6' }, Pair { card_count: 2, card: '7' }, Pair { card_count: 2, card: 'K' }]
-    // 9    -> "KTJJT" -> [Pair { card_count: 2, card: 'J' }, Pair { card_count: 1, card: 'K' }, Pair { card_count: 2, card: 'T' }]
-    // 11   -> "QQQJA" -> [Pair { card_count: 1, card: 'A' }, Pair { card_count: 1, card: 'J' }, Pair { card_count: 3, card: 'Q' }]
+    // "32T3K" -> 7  -> (1*1) + (2*2) + (1*1) + (1*1) -> [Pair { card_count: 1, card: '2' }, Pair { card_count: 2, card: '3' }, Pair { card_count: 1, card: 'K' }, Pair { card_count: 1, card: 'T' }]
+    // "T55J5" -> 11 -> (3*3) + (1*1) + (1*1)         -> [Pair { card_count: 3, card: '5' }, Pair { card_count: 1, card: 'J' }, Pair { card_count: 1, card: 'T' }]
+    // "KK677" -> 9  -> (1*1) + (2*2) + (2*2)         -> [Pair { card_count: 1, card: '6' }, Pair { card_count: 2, card: '7' }, Pair { card_count: 2, card: 'K' }]
+    // "KTJJT" -> 9  -> (2*2) + (1*1) + (2*2)         -> [Pair { card_count: 2, card: 'J' }, Pair { card_count: 1, card: 'K' }, Pair { card_count: 2, card: 'T' }]
+    // "QQQJA" -> 11 -> (1*1) + (1*1) + (3*3)         -> [Pair { card_count: 1, card: 'A' }, Pair { card_count: 1, card: 'J' }, Pair { card_count: 3, card: 'Q' }]
     pairs
         .iter()
         .map(|pair| pair.card_count * pair.card_count)
