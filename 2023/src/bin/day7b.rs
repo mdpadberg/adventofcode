@@ -41,6 +41,11 @@ impl Ord for Hand {
         match self.score.cmp(&other.score) {
             Ordering::Less => Ordering::Less,
             Ordering::Greater => Ordering::Greater,
+            //If two hands have the same type, a second ordering rule takes effect. 
+            // Start by comparing the first card in each hand. If these cards are different, 
+            // the hand with the stronger first card is considered stronger. If the first card in 
+            // each hand have the same label, however, then move on to considering the second card 
+            // in each hand.
             Ordering::Equal => {
                 let possible_cards = "J23456789TQKA";
                 for (a, b) in self.cards.chars().zip(other.cards.chars()) {
