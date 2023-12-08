@@ -47,7 +47,7 @@ fn solve(input: String) -> usize {
         .map(|(_, next_element)| next_element)
         .map(|next_element| solve_one_starting_point(next_element, &instructions, &nodes))
         .collect::<Vec<usize>>();
-    lcm(&nodes)
+    least_common_multiple_algorithm(&nodes)
 }
 
 fn solve_one_starting_point(
@@ -73,12 +73,12 @@ fn solve_one_starting_point(
     counter
 }
 
-fn lcm(nums: &[usize]) -> usize {
+fn least_common_multiple_algorithm(nums: &[usize]) -> usize {
     if nums.len() == 1 {
         return nums[0];
     }
     let a = nums[0];
-    let b = lcm(&nums[1..]);
+    let b = least_common_multiple_algorithm(&nums[1..]);
     a * b / gcd_of_two_numbers(a, b)
 }
 
