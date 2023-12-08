@@ -78,7 +78,7 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(2, solve(read_test_data_for_day("8a.txt").unwrap()));
-        assert_eq!(6, solve(read_test_data_for_day("8b.txt").unwrap()));
+        assert_eq!(2, solve(read_test_data_for_day("8a1.txt").unwrap()));
+        assert_eq!(6, solve(read_test_data_for_day("8a2.txt").unwrap()));
     }
 }
