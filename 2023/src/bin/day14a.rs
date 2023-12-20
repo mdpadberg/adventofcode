@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use aoc2023::util::read_data_for_day;
 use itertools::Itertools;
 
