@@ -48,15 +48,13 @@ To see all possibilities
 % cargo run --package benchtest -- -h
 Options:
   -l, --language <LANGUAGE>
-          Supported languages [default: rust] [possible values: javascript, rust]
+          Supported languages [possible values: javascript, rust]
   -a, --amount-of-runs <AMOUNT_OF_RUNS>
           Amount of runs [default: 100]
-  -o, --operation-system <OPERATION_SYSTEM>
-          Operation system on which you run you code [default: ubuntu] [possible values: mac, ubuntu]
   -y, --year <YEAR>
-          Year on which you want to run the benchmark tool on [default: 2023]
+          Year on which you want to run the benchmark tool on [default: 2024]
   -d, --day <DAY>
-          Day on which you want to run the benchmark tool on [default: 5]
+          Day on which you want to run the benchmark tool on [default: 4]
   -h, --help
           Print help information
   -V, --version
@@ -65,12 +63,12 @@ Options:
 
 To run a benchmark for the current day:
 ```
-cargo build --package benchtest --release && ./target/release/benchtest
+cargo run --package benchtest -- --language rust
 ```
 
 To run a benchmark for a specific day:
 ```
-cargo build --package benchtest --release && ./target/release/benchtest --year 2022 --day 1 --language rust --amount-of-runs 100 --operation-system ubuntu
+cargo run --package benchtest -- --language rust --year 2023 --day 9
 ```
 
 # Year 2023

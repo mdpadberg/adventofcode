@@ -1,96 +1,104 @@
 use crate::cli::Args;
 use crate::cli::Language;
-use crate::cli::Os;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::bail;
+use std::path::Path;
 use std::process::Command;
+use std::time::Instant;
 
 pub fn run(args: Args) -> Result<()> {
     let year = args.year;
-    let first_part = format!("day{}a", args.day);
-    let second_part = format!("day{}b", args.day);
-    let output_folder = format!("{}/performance/", args.year);
-    match (args.operation_system, args.language) {
-        (Os::ubuntu, Language::javascript) => {
-            let result_first_part = linux_time_command(
-                args.amount_of_runs,
-                &format!("benchtest/src/js.sh"),
-                &format!("{year}/src/bin/{first_part}.js"),
-            )?;
-            let result_second_part = linux_time_command(
-                args.amount_of_runs,
-                &format!("benchtest/src/js.sh"),
-                &format!("{year}/src/bin/{second_part}.js"),
-            )?;
-            write_to_file(
-                &output_folder,
-                &format!("{}{}.txt", &output_folder, &first_part),
-                result_first_part,
-            )?;
-            write_to_file(
-                &output_folder,
-                &format!("{}{}.txt", &output_folder, &second_part),
-                result_second_part,
-            )?;
-            Ok(())
-        }
-        (Os::ubuntu, Language::rust) => {
-            cargo_build(year, &first_part)?;
-            cargo_build(year, &second_part)?;
-            let result_first_part = linux_time_command(
-                args.amount_of_runs,
-                &format!("benchtest/src/rust.sh"),
-                &format!("target/release/{first_part}"),
-            )?;
-            let result_second_part = linux_time_command(
-                args.amount_of_runs,
-                &format!("benchtest/src/rust.sh"),
-                &format!("target/release/{second_part}"),
-            )?;
-            write_to_file(
-                &output_folder,
-                &format!("{}{}.txt", &output_folder, &first_part),
-                result_first_part,
-            )?;
-            write_to_file(
-                &output_folder,
-                &format!("{}{}.txt", &output_folder, &second_part),
-                result_second_part,
-            )?;
-            Ok(())
-        }
-        // TODO does time -l work?
-        (Os::mac, Language::javascript) => todo!(),
-        // TODO does time -l work? && needs to build first then call from target folder
-        (Os::mac, Language::rust) => todo!(),
-    }
-}
-
-/// Time writes by default to STDERR, but you can also write it to a file
-/// See man page for more info: https://man7.org/linux/man-pages/man1/time.1.html
-fn linux_time_command(
-    amount_of_runs: u32,
-    shell_file: &str,
-    path_to_file_to_benchmark: &str,
-) -> Result<String> {
-    let pre_text = format!("These are the result of {amount_of_runs} test runs: \n");
-    let result = String::from_utf8(
-        Command::new("/usr/bin/time")
-            .args([
-                "-v",
-                shell_file,
-                &format!("{}", amount_of_runs),
-                path_to_file_to_benchmark,
-            ])
-            .output()?
-            .stderr,
+    let amount_of_runs = args.amount_of_runs.to_string();
+    run_part_of_day(
+        year,
+        &amount_of_runs,
+        args.language,
+        format!("day{}a", args.day),
     )?;
-    Ok(format!("{}{}", pre_text, result))
+    run_part_of_day(
+        year,
+        &amount_of_runs,
+        args.language,
+        format!("day{}b", args.day),
+    )?;
+    Ok(())
 }
 
-fn write_to_file(folder: &String, file: &String, data: String) -> Result<()> {
+fn run_part_of_day(
+    year: i32,
+    amount_of_runs: &String,
+    language: Language,
+    filename: String,
+) -> Result<()> {
+    let output_folder = format!("{}/performance/", year);
+    let project_root = format!("{}", env!("CARGO_MANIFEST_DIR").replace("/benchtest", ""));
+    let (path_to_assignment, path_to_script) = match language {
+        Language::Javascript => {
+            if Command::new("which").arg("node").output()?.stdout.is_empty() {
+                bail!("Could not find node, please install node");
+            }
+            let path_to_script = format!("{project_root}/benchtest/src/js.sh");
+            let path_to_assignment =
+                format!("{project_root}/target/release/{year}/src/bin/{filename}.js",);
+            (path_to_assignment, path_to_script)
+        }
+        Language::Rust => {
+            if Command::new("which").arg("cargo").output()?.stdout.is_empty() {
+                bail!("Could not find cargo, please install rust and cargo via rustup");
+            }
+            cargo_build(year, &filename)?;
+            let path_to_script = format!("{project_root}/benchtest/src/rust.sh");
+            let path_to_assignment = format!("{project_root}/target/release/{filename}");
+            (path_to_assignment, path_to_script)
+        }
+    };
+    run_code_and_measure_time(
+        path_to_assignment,
+        path_to_script,
+        filename,
+        amount_of_runs,
+        output_folder,
+    )?;
+    Ok(())
+}
+
+fn run_code_and_measure_time(
+    path_to_assignment: String,
+    path_to_script: String,
+    filename: String,
+    amount_of_runs: &String,
+    output_folder: String,
+) -> Result<()> {
+    if Path::new(&path_to_assignment).exists() {
+        let now = Instant::now();
+        // Code block to measure.
+        {
+            Command::new(path_to_script)
+                .args([&amount_of_runs, &path_to_assignment])
+                .output()?;
+        }
+        let elapsed = now.elapsed();
+        let result = format!("{:.2?}", elapsed);
+        write_to_file(
+            &output_folder,
+            &format!("{}{}.txt", &output_folder, &filename),
+            result,
+            &amount_of_runs,
+        )?;
+    }
+    Ok(())
+}
+
+fn write_to_file(
+    folder: &String,
+    file: &String,
+    data: String,
+    amount_of_runs: &String,
+) -> Result<()> {
+    let pre_text = format!("{amount_of_runs} run(s) took: {}", data);
     std::fs::create_dir_all(folder).context("cannot create this folder")?;
-    std::fs::write(&file, data).context("cannot write to file")?;
+    std::fs::write(&file, pre_text).context("cannot write to file")?;
     Ok(())
 }
 
