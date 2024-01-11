@@ -1,8 +1,8 @@
 use crate::cli::Args;
 use crate::cli::Language;
+use anyhow::bail;
 use anyhow::Context;
 use anyhow::Result;
-use anyhow::bail;
 use std::path::Path;
 use std::process::Command;
 use std::time::Instant;
@@ -35,16 +35,25 @@ fn run_part_of_day(
     let project_root = format!("{}", env!("CARGO_MANIFEST_DIR").replace("/benchtest", ""));
     let (path_to_assignment, path_to_script) = match language {
         Language::Javascript => {
-            if Command::new("which").arg("node").output()?.stdout.is_empty() {
+            if Command::new("which")
+                .arg("node")
+                .output()?
+                .stdout
+                .is_empty()
+            {
                 bail!("Could not find node, please install node");
             }
             let path_to_script = format!("{project_root}/benchtest/src/js.sh");
-            let path_to_assignment =
-                format!("{project_root}/target/release/{year}/src/bin/{filename}.js",);
+            let path_to_assignment = format!("{project_root}/{year}/src/bin/{filename}.js",);
             (path_to_assignment, path_to_script)
         }
         Language::Rust => {
-            if Command::new("which").arg("cargo").output()?.stdout.is_empty() {
+            if Command::new("which")
+                .arg("cargo")
+                .output()?
+                .stdout
+                .is_empty()
+            {
                 bail!("Could not find cargo, please install rust and cargo via rustup");
             }
             cargo_build(year, &filename)?;
@@ -74,9 +83,15 @@ fn run_code_and_measure_time(
         let now = Instant::now();
         // Code block to measure.
         {
-            Command::new(path_to_script)
+            let result = Command::new(path_to_script)
                 .args([&amount_of_runs, &path_to_assignment])
                 .output()?;
+            if !result.stderr.is_empty() {
+                bail!(
+                    "File: '{path_to_assignment}' contains errors in stderr while running. Stderr: {:?}", 
+                    String::from_utf8(result.stderr)
+                );
+            }
         }
         let elapsed = now.elapsed();
         let result = format!("{:.2?}", elapsed);
