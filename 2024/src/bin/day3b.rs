@@ -1,11 +1,10 @@
 use aoc2024::util::read_data_for_day;
 use itertools::Itertools;
-use lazy_static::lazy_static;
 use regex::Regex;
+use std::sync::LazyLock;
 
-lazy_static! {
-    static ref REGEX: Regex = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)").unwrap();
-}
+static REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)").unwrap());
 
 fn main() {
     println!("{:?}", solve(read_data_for_day(3).unwrap()));
@@ -18,10 +17,10 @@ fn solve(input: String) -> u32 {
         match &capture[0] {
             "do()" => {
                 skip = false;
-            },
+            }
             "don't()" => {
                 skip = true;
-            },
+            }
             _ => {
                 if !skip {
                     let a = capture[1].parse::<u32>().unwrap();
