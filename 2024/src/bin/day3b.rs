@@ -11,26 +11,22 @@ fn main() {
 }
 
 fn solve(input: String) -> u32 {
-    let mut result = 0;
-    let mut skip = false;
-    for capture in REGEX.captures_iter(&input) {
-        match &capture[0] {
-            "do()" => {
-                skip = false;
-            }
-            "don't()" => {
-                skip = true;
-            }
+    REGEX
+        .captures_iter(&input)
+        .fold((0, false), |(sum, skip), capture| match &capture[0] {
+            "do()" => (sum, false),
+            "don't()" => (sum, true),
             _ => {
-                if !skip {
-                    let a = capture[1].parse::<u32>().unwrap();
-                    let b = capture[2].parse::<u32>().unwrap();
-                    result += a * b;
+                if skip {
+                    (sum, skip)
+                } else {
+                    let add =
+                        capture[1].parse::<u32>().unwrap() * capture[2].parse::<u32>().unwrap();
+                    (sum + add, skip)
                 }
             }
-        }
-    }
-    result
+        })
+        .0
 }
 
 #[cfg(test)]
