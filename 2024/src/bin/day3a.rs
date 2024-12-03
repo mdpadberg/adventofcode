@@ -29,6 +29,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(161, solve(read_test_data_for_day("3.txt").unwrap()));
+        assert_eq!(161, solve(read_test_data_for_day("3a.txt").unwrap()));
     }
 }
