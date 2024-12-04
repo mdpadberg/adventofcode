@@ -1,6 +1,6 @@
-use std::{collections::HashMap, ops::Add};
 use aoc2024::util::read_data_for_day;
 use itertools::Itertools;
+use std::{collections::HashMap, ops::Add};
 
 fn main() {
     println!("{:?}", solve(read_data_for_day(4).unwrap()));
@@ -56,8 +56,8 @@ fn solve(input: String) -> u32 {
     for (current_coordinates, _) in grid.iter() {
         for direction in directions.iter() {
             let mut word = String::from("");
-            for direct_coordinates in direction {
-                let new_coordinates = current_coordinates + direct_coordinates;
+            for direction_coordinates in direction {
+                let new_coordinates = current_coordinates + direction_coordinates;
                 if let Some(some) = grid.get(&new_coordinates) {
                     word.push(*some);
                 }
