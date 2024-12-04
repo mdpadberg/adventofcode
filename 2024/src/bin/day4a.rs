@@ -26,33 +26,13 @@ impl Add for &Coordinates {
 fn solve(input: String) -> u32 {
     let directions = vec![
         //Horizontal
-        vec![
-            Coordinates { x: 0, y: 0 },
-            Coordinates { x: 1, y: 0 },
-            Coordinates { x: 2, y: 0 },
-            Coordinates { x: 3, y: 0 },
-        ],
-        // //Veritical
-        vec![
-            Coordinates { x: 0, y: 0 },
-            Coordinates { x: 0, y: 1 },
-            Coordinates { x: 0, y: 2 },
-            Coordinates { x: 0, y: 3 },
-        ],
-        // //Cross
-        vec![
-            Coordinates { x: 0, y: 0 },
-            Coordinates { x: 1, y: 1 },
-            Coordinates { x: 2, y: 2 },
-            Coordinates { x: 3, y: 3 },
-        ],
-        // //Cross
-        vec![
-            Coordinates { x: 3, y: 0 },
-            Coordinates { x: 2, y: 1 },
-            Coordinates { x: 1, y: 2 },
-            Coordinates { x: 0, y: 3 },
-        ],
+        vec![Coordinates { x: 0, y: 0 }, Coordinates { x: 1, y: 0 }, Coordinates { x: 2, y: 0 }, Coordinates { x: 3, y: 0 }],
+        //Veritical
+        vec![Coordinates { x: 0, y: 0 }, Coordinates { x: 0, y: 1 }, Coordinates { x: 0, y: 2 }, Coordinates { x: 0, y: 3 }],
+        //Cross
+        vec![Coordinates { x: 0, y: 0 }, Coordinates { x: 1, y: 1 }, Coordinates { x: 2, y: 2 }, Coordinates { x: 3, y: 3 }],
+        //Cross
+        vec![Coordinates { x: 3, y: 0 }, Coordinates { x: 2, y: 1 }, Coordinates { x: 1, y: 2 }, Coordinates { x: 0, y: 3 }],
     ];
     let grid: HashMap<Coordinates, char> = input
         .split("\n")
