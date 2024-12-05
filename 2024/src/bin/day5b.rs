@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{cmp::Ordering, collections::HashMap};
 
 use aoc2024::util::read_data_for_day;
 use itertools::Itertools;
@@ -23,8 +23,24 @@ fn solve(input: String) -> u32 {
         })
         .collect();
     updates
-        .iter()
-        .filter(|update| is_valid_update(update, &rules))
+        .into_iter()
+        .filter(|update| !is_valid_update(&update, &rules))
+        .map(|mut update| {
+            update.sort_by(|a, b| {
+                if let Some(some) = rules.get(a) {
+                    if some.contains(b) {
+                        return Ordering::Less;
+                    }
+                }
+                if let Some(some) = rules.get(b) {
+                    if some.contains(a) {
+                        return Ordering::Greater;
+                    }
+                }
+                return Ordering::Equal;
+            });
+            update
+        })
         .map(|update| update[update.len() / 2])
         .sum()
 }
@@ -51,6 +67,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(143, solve(read_test_data_for_day("5.txt").unwrap()));
+        assert_eq!(123, solve(read_test_data_for_day("5.txt").unwrap()));
     }
 }
