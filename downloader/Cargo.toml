@@ -1,0 +1,13 @@
+[package]
+name = "downloader"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+chrono = "0.4.39"
+reqwest = { version = "0.12.9", features = ["blocking"] }
+anyhow = "1.0.94"
+scraper = "0.19.1"
