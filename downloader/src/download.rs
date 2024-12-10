@@ -25,8 +25,8 @@ pub fn download(
 
 fn download_input_data(cookie: &String, year: &i32, day: &u32) -> Result<()> {
     let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
-    let folder = format!("{}/data/", year);
-    let file = format!("{}/data/{}.txt", year, day);
+    let folder = format!("adventofcode-private/data/{}", year);
+    let file = format!("adventofcode-private/data/{}/{}.txt", year, day);
     let response =
         call_url_with_headers(url, create_cookie_header(&cookie)?)?.text_with_charset("utf-8")?;
     let stripped_last_new_line = if response.contains("\n") && response.len() > 2 {
@@ -39,8 +39,8 @@ fn download_input_data(cookie: &String, year: &i32, day: &u32) -> Result<()> {
 
 fn download_assignment(cookie: &String, year: &i32, day: &u32) -> Result<()> {
     let url = format!("https://adventofcode.com/{}/day/{}", year, day);
-    let folder = format!("{}/assignment/", year);
-    let file = format!("{}/assignment/{}.html", year, day);
+    let folder = format!("adventofcode-private/assignments/{}", year);
+    let file = format!("adventofcode-private/assignments/{}/{}.html", year, day);
     let response =
         call_url_with_headers(url, create_cookie_header(&cookie)?)?.text_with_charset("utf-8")?;
     let document = Html::parse_fragment(&response);
