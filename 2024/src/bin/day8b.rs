@@ -47,13 +47,13 @@ fn solve(input: String) -> usize {
                 .iter()
                 .tuple_combinations()
                 .flat_map(|(first_antenna, second_antenna)| {
-                    [
-                        antinode(first_antenna, second_antenna, 2, max_x, max_y),
-                        antinode(first_antenna, second_antenna, -1, max_x, max_y),
-                    ]
+                    let down = (1..)
+                        .map_while(|n| antinode(first_antenna, second_antenna, -n, max_x, max_y));
+                    let up = (0..)
+                        .map_while(|n| antinode(first_antenna, second_antenna, n, max_x, max_y));
+                    down.chain(up)
                 })
         })
-        .filter(|antinode| antinode.is_some())
         .unique()
         .count()
 }
@@ -83,6 +83,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(14, solve(read_test_data_for_day("8-0").unwrap()));
+        assert_eq!(34, solve(read_test_data_for_day("8-0").unwrap()));
     }
 }
