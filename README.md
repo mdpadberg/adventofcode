@@ -23,6 +23,7 @@ git push --recurse-submodules=on-demand
 
 # Table of Contents
 - [Utility tools](#utility-tools)
+- [2025](#year-2025)
 - [2024](#year-2024)
 - [2023](#year-2023)
 - [2022](#year-2022)
@@ -95,6 +96,19 @@ cargo run --package benchtest -- --language rust
 To run a benchmark for a specific day:
 ```
 cargo run --package benchtest -- --language rust --year 2023 --day 9
+```
+
+# Year 2025
+How to run one day:
+```
+cargo run --package aoc2025 --bin day1a --release
+cargo run --package aoc2025 --bin day1b --release
+```
+
+How to run the tests:
+```
+cargo test --package aoc2025 --bin day1a
+cargo test --package aoc2025 --bin day1b
 ```
 
 # Year 2024

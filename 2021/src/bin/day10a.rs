@@ -70,7 +70,7 @@ impl NavigationSubSystemLine {
                     if sign == signs.last().unwrap() {
                         signs.pop();
                     }
-                },
+                }
                 '(' => {
                     signs.push(')');
                 }
@@ -107,7 +107,10 @@ mod test {
 
     #[test]
     fn one() {
-        assert_eq!(26397, solve_part_one(read_file_line_by_line_to_string_test("10-1")));
+        assert_eq!(
+            26397,
+            solve_part_one(read_file_line_by_line_to_string_test("10-1"))
+        );
     }
 
     #[test]
@@ -155,7 +158,7 @@ mod test {
                     '}', ']', ']', ']', '>', '[', ']', ']'
                 ]
             ],
-            parse_intput(test_data())
+            parse_intput(read_file_line_by_line_to_string_test("10-1"))
         )
     }
 
