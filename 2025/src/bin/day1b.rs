@@ -10,18 +10,24 @@ fn main() -> Result<(), MyError> {
 
 fn solve(input: String) -> Result<i16, MyError> {
     let mut safe_dial = 50;
-    let mut password = 0;
+    let mut clicks = 0;
     for direction in parse(input)?.iter() {
         let rotation = match direction {
-            RotationDirection::R(rotation) => rotation,
-            RotationDirection::L(rotation) => &(rotation * -1),
+            RotationDirection::R(rotation) => *rotation,
+            RotationDirection::L(rotation) => *rotation,
         };
-        safe_dial = (safe_dial + rotation).rem_euclid(100);
-        if safe_dial == 0 {
-            password += 1;
+        for _ in 0..rotation {
+            let new_safe_dial: i16 = match direction {
+                RotationDirection::R(_) => safe_dial + 1,
+                RotationDirection::L(_) => safe_dial - 1,
+            };
+            safe_dial = new_safe_dial.rem_euclid(100);
+            if safe_dial == 0 {
+                clicks += 1;
+            }
         }
     }
-    Ok(password)
+    Ok(clicks)
 }
 
 fn parse(input: String) -> Result<Vec<RotationDirection>, MyError> {
@@ -59,6 +65,6 @@ mod test {
 
     #[test]
     fn solvetest() {
-        assert_eq!(3, solve(read_test_data_for_day("1-0").unwrap()).unwrap());
+        assert_eq!(6, solve(read_test_data_for_day("1-0").unwrap()).unwrap());
     }
 }

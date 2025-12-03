@@ -107,8 +107,8 @@ cargo run --package aoc2025 --bin day1b --release
 
 How to run the tests:
 ```
-cargo test --package aoc2025 --bin day1a
-cargo test --package aoc2025 --bin day1b
+cargo test --package aoc2025 --bin day1a -- --nocapture
+cargo test --package aoc2025 --bin day1b -- --nocapture
 ```
 
 # Year 2024
