@@ -1,7 +1,6 @@
-use std::collections::{HashMap, HashSet};
-
 use aoc2025::util::read_data_for_day;
 use itertools::Itertools;
+use std::collections::HashMap;
 use thiserror::Error;
 
 fn main() -> Result<(), MyError> {
